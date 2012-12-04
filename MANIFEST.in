@@ -1,2 +1,2 @@
-include CHANGES, README, LICENSE
+include CHANGES.txt, README.rst, LICENSE
 recursive-include easy_messages *
