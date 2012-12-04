@@ -12,6 +12,7 @@ setup(
     author="Jeff Ammons",
     author_email="jeff@jeffammons.net",
     url='https://github.com/jammons/django-easy-messages',
+    license='LICENSE',
     long_description=open('README.rst').read(),
     packages=find_packages(),
     requires=[
