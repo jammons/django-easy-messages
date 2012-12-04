@@ -1,4 +1,3 @@
-====================
 Django Easy Messages
 ===================
 
@@ -8,9 +7,9 @@ Installation:
 -------------
 
 1. Add ``easy_messages`` to ``INSTALLED_APPS`` in settings.py.
-1. Add ``easy_messages.middleware.AjaxMessaging`` to ``MIDDLEWARE_CLASSES`` in settings.py.
-1. Add the following lines to your base template in the desired locations:
-.. code-block:: html
+2. Add ``easy_messages.middleware.AjaxMessaging`` to ``MIDDLEWARE_CLASSES`` in settings.py.
+3. Add the following lines to your base template in the desired locations::
+
     {% include "messages/list.html" %}
     <script type="text/javascript" src="{{ STATIC_URL }}js/messages.js"></script>
     <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/messages.css" />
