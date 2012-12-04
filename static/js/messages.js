@@ -1,0 +1,126 @@
+//// Messaging JS ////
+
+// <ul>
+MessageListView = Backbone.View.extend({
+    initialize: function() {
+        _.bindAll(this, 'add');
+        this.collection.bind('add', this.add);
+    },
+
+    add: function(msg) {
+        var msg_view = new MessageView({ model: msg });
+        $(msg_view.render().el).hide().appendTo($(this.el)).show('blind', 'fast');
+    }
+
+});
+
+// <li>
+MessageModel = Backbone.Model.extend({
+    defaults: {
+        msg: null,
+        tags: [],
+    },
+});
+
+MessageView = Backbone.View.extend({
+    initialize: function() {
+        _.bindAll(this, 'render');
+        this.template = $('#message-template').html();
+    },
+
+    tagName: 'li',
+
+    events: {
+        'click .hide': 'hide',
+    },
+
+    render: function() {
+        var view = this;
+        // add classes
+        $(view.el).addClass('message'); 
+        var tags = this.model.get('tags').toString().replace(',', ' ');
+        $(view.el).addClass(tags); // I haven't verified that this works for multiple tags.
+        var li_el= _.template(this.template, {
+            msg: view.model.get('msg')
+        });
+
+        $(view.el).html(li_el);
+        return view;
+    },
+
+    hide: function() {
+        $(this.el).hide('blind', 'fast');
+    }
+});
+
+MessageCollection = Backbone.Collection.extend({
+    model: MessageModel
+});
+
+$(function() {
+    // create collection
+    var messageCollection = new MessageCollection();
+
+    // populate the collection from DOM
+    $('.message').each(function(index, msg_li){
+        var classList = Array.prototype.slice.call(msg_li.classList);
+        var idx = classList.indexOf('message');
+        if (idx !=-1) classList.splice(idx, 1);
+
+        var msgModel = new MessageModel({ 
+            msg: msg_li.innerText,
+            tags: classList
+        });
+
+        var msgView = new MessageView({
+            model: msgModel,
+            el: msg_li
+        });
+
+        messageCollection.add(msgModel, { silent: true });
+    });
+ 
+    // create view, add collection, and attack to DOM
+    var messageListView = new MessageListView({
+        el: $(".messages"),
+        collection: messageCollection
+    });
+ 
+    app.messageListView = messageListView;
+
+    // set up ajax success handler
+    $('body').ajaxSuccess(function(e, xhr, settings) {
+        var json = $.parseJSON(xhr.responseText);
+        if (!!json) {
+            var messages = json.messages;
+            if (!!messages) {
+                app.messageListView.collection.add(messages);
+            }
+        }
+    });
+
+    // set up ajax error messages
+    $('body').ajaxError(function(e, xhr, settings, error) {
+        var messages;
+        var json;
+        // Check for included messages
+        try {
+            json = $.parseJSON(xhr.responseText);
+        } catch(err) {
+            json = null;
+        }
+        if (!!json) {
+            messages = json.messages
+        } else {
+            // Build a default message
+            var message = {
+                msg: xhr.status + ' ' + xhr.statusText,
+                tags: ['error']
+            }
+            messages = [message]
+        }
+        if (!!messages) {
+            app.messageListView.collection.add(messages);
+        }
+    });
+});
