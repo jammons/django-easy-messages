@@ -15,3 +15,5 @@ Installation:
     <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/messages.css" />
 
 Note also that there's also a messages.less file included if you'd prefer to use .less instead of css.
+
+See ``examples.views.py`` for usage in views and API calls.

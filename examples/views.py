@@ -10,11 +10,16 @@ def example_view(request):
     messages.add_message(request, messages.constants.WARNING, 'Be Careful!')
 
     # some logic here
-    return render(request, 'some_template.html', {}) 
+    return render(request, 'some_template.html', {})
 
 def example_api_view(request):
-    messages.add_message(request, messages.constants.WARNING, 'Be Careful!')
+    messages.add_message(
+        request, messages.constants.WARNING,
+        'Be Careful!'
+    )
 
-    return HttpResponse(json.dumps(
-        {'some_var': True}), mimetype='application/json')
+    return HttpResponse(
+        json.dumps({'some_var': True}),
+        mimetype='application/json' # NOTE: the mimetype is required
+    )
 
